@@ -1,1 +1,1 @@
-# Bogly
+# Blogly
