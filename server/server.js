@@ -17,7 +17,7 @@ import {getAuth} from 'firebase-admin/auth';
 process.removeAllListeners('warning');
 
 const server = express();
-let port = 3000;
+let port = process.env.Port || 3000;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccountKey)
