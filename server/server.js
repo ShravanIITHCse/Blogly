@@ -7,17 +7,35 @@ import { nanoid } from 'nanoid';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import admin from 'firebase-admin';
-// import serviceAccountKey from './blogly-2db1a-firebase-adminsdk-5fczo-04dcbe2750.json' assert { type: "json" };
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const serviceAccountKey = require('./blogly-2db1a-firebase-adminsdk-5fczo-04dcbe2750.json');
+// const serviceAccountKey = require('./blogly-2db1a-firebase-adminsdk-5fczo-04dcbe2750.json');
+const serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
 import {getAuth} from 'firebase-admin/auth';
+import aws from 'aws-sdk';
 
+// setting up as s3 bucket
+const s3 = new aws.S3({
+  region: process.env.AWS_REGION,
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
 
+const generateUploadUrl = async () => {
+  const date = new Date();
+  const imageName = `${nanoid()}-${date.getTime()}.jpeg`;
+
+  return await s3.getSignedUrlPromise('putObject', {
+    Bucket: 'blogly-bucket',
+    Key: imageName,
+    Expires: 1000,
+    ContentType: 'image/jpeg',
+  })
+}
 process.removeAllListeners('warning');
 
 const server = express();
-let port = process.env.Port || 3000;
+let port = 3000;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccountKey)
@@ -51,6 +69,15 @@ const generateUsername = async(email) => {
 
     return username;
 }
+
+server.get('/get-upload-url', async (req, res) => {
+  generateUploadUrl().then((url) => {
+    return res.status(200).json({uploadURL : url})
+  })
+  .catch((err) => {
+    return res.status(500).json({ "error" : err.message})
+  })
+})
 
 server.post("/signup", (req, res) => {
     let {fullname, email, password} = req.body;

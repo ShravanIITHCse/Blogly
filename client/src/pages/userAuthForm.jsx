@@ -1,5 +1,5 @@
 import { Link, Navigate } from 'react-router-dom';
-import InputBox from '../components/inputBox.jsx';
+import InputBox from '../components/inputBox.component.jsx';
 import googleIcon from '../imgs/google.png';
 import AnimationWrapper from '../common/page-animation.jsx';
 import { Toaster, toast } from 'react-hot-toast';
