@@ -35,3 +35,4 @@ The following features are not yet implemented:
 - Express
 - MongoDB
 - AWS S3
+- Firebase Api
