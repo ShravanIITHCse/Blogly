@@ -1,5 +1,7 @@
 # React + Vite
 
+The reason to use vite was it provides real time updates as we code this is due to the fact that it uses esbuild to bundle the code.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
